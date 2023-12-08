@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import { Dropdown, DropdownButton } from "react-bootstrap";
+//import { Dropdown, DropdownButton } from "react-bootstrap";
 import MaleNames from './maleNames.json';
 import FemaleNames from './femaleNames.json';
 
@@ -19,7 +19,7 @@ class FullRandomShep extends Component {
             background: '',
             serviceHistory: '',
             morality: '',
-            showing: true
+            show: false
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -43,8 +43,8 @@ class FullRandomShep extends Component {
                 chClass: '',
                 background: '',
                 serviceHistory: '',
-                morality: '',
-                show: true
+                morality: ''
+                
             });
         }
     }
@@ -80,11 +80,13 @@ class FullRandomShep extends Component {
         this.setState({firstName: randName.charAt(0) + randName.substring(1, randName.length).toLocaleLowerCase()});
     }
 
+    // Note to self: is not generating name if selected first upon loading page
     randomizeShep = () => {
         var gender = this.randomGender();
         this.randomName(gender);
         var output = this.generateRandomShep();
         alert(output);
+        this.clearAllStates();
     }
 
     handleChange = (event, key) => {
@@ -96,12 +98,33 @@ class FullRandomShep extends Component {
     handleSubmit = (e) => {
         var output = this.generateRandomShep();
         alert(output);
+        this.clearAllStates();
+        e.preventDefault();
+    }
+
+    handleAdvSubmit = (e) => {
+        var output = ('Name: ' + this.state.firstName + ' Shepard\nGender: ' + this.state.gender + '\nClass: ' + this.state.chClass + '\nBackground: ' 
+        + this.state.background + '\nService History: ' + this.state.serviceHistory + '\nMorality: ' + this.state.morality);
+        alert(output);
+        this.clearAllStates();
         e.preventDefault();
     }
 
     randomIndexInList = (min, max) => { 
         return (Math.floor(Math.random() * (max - min + 1)) + min);
     }; 
+
+    clearAllStates = () => {
+        this.setState({
+            firstName: '',
+            gender: '',
+            chClass: '',
+            background: '',
+            serviceHistory: '',
+            morality: '',
+            show: false
+        });
+    }
 
     render(){
         return (
@@ -115,36 +138,45 @@ class FullRandomShep extends Component {
                     <input name="genderSelect" type="radio" value={'Male'} /> Male
                     <input name="genderSelect" type="radio"  value={'Female'} /> Female
                 </div>
-                <button type="button" onClick={this.handleSubmit}>Submit</button>
+                <input type="submit" value="Generate"/>
                 <button type="button" onClick={this.randomizeShep}>Surprise Me</button>
                 <div>
                     <button type="button" onClick={() => {this.setState({show: !this.state.show})}}>{ this.state.show? 'Hide' : 'Show'} Adv. Options</button>
                     {
                         this.state.show? 
                         <div>
-                            <DropdownButton id="dropdown-basic-button" title="Character Class" onChange={event => this.handleChange(event, 'chClass')}>
-                                <Dropdown.Item value={'Soldier'}>{this.chClasses[0]}</Dropdown.Item>
-                                <Dropdown.Item value={'Engineer'}>{this.chClasses[1]}</Dropdown.Item>
-                                <Dropdown.Item value={'Adept'}>{this.chClasses[2]}</Dropdown.Item>
-                                <Dropdown.Item value={'Infiltrator'}>{this.chClasses[3]}</Dropdown.Item>
-                                <Dropdown.Item value={'Sentinal'}>{this.chClasses[4]}</Dropdown.Item>
-                                <Dropdown.Item value={'Vanguard'}>{this.chClasses[5]}</Dropdown.Item>
-                            </DropdownButton>
-                            <DropdownButton id="dropdown-basic-button" title="Background" onChange={event => this.handleChange(event, 'background')}>
-                                <Dropdown.Item value={'Spacer'}>{this.backgrounds[0]}</Dropdown.Item>
-                                <Dropdown.Item value={'Colonist'}>{this.backgrounds[1]}</Dropdown.Item>
-                                <Dropdown.Item value={'Earthborn'}>{this.backgrounds[2]}</Dropdown.Item>
-                            </DropdownButton>
-                            <DropdownButton id="dropdown-basic-button" title="Service History" onChange={event => this.handleChange(event, 'serviceHistory')}>
-                                <Dropdown.Item value={'Sole Survivor'}>{this.serviceHistories[0]}</Dropdown.Item>
-                                <Dropdown.Item value={'War Hero'}>{this.serviceHistories[1]}</Dropdown.Item>
-                                <Dropdown.Item value={'Ruthless'}>{this.serviceHistories[2]}</Dropdown.Item>
-                            </DropdownButton>
-                            <DropdownButton id="dropdown-basic-button" title="Morality" onChange={event => this.handleChange(event, 'morality')}>
-                                <Dropdown.Item value={'Paragon'}>{this.morals[0]}</Dropdown.Item>
-                                <Dropdown.Item value={'Renegade'}>{this.morals[1]}</Dropdown.Item>
-                                <Dropdown.Item value={'Paragade (aka: Neutral/bit of both)'}>{this.morals[2]}</Dropdown.Item>
-                            </DropdownButton>
+                            Class: 
+                            <select onChange={event => this.handleChange(event, 'chClass')}>
+                                <option></option>
+                                <option value={'Soldier'}> {this.chClasses.at(0)} </option>
+                                <option value={'Engineer'}> {this.chClasses.at(1)} </option>
+                                <option value={'Adept'}> {this.chClasses.at(2)} </option>
+                                <option value={'Infiltrator'}> {this.chClasses.at(3)} </option>
+                                <option value={'Sentinel'}> {this.chClasses.at(4)} </option>
+                                <option value={'Vanguard'}> {this.chClasses.at(5)} </option>
+                            </select>
+                            Background: 
+                            <select onChange={event => this.handleChange(event, 'background')}>
+                                <option></option>
+                                <option value={'Spacer'}> {this.backgrounds.at(0)} </option>
+                                <option value={'Colonist'}> {this.backgrounds.at(1)} </option>
+                                <option value={'Earthborn'}> {this.backgrounds.at(2)} </option>
+                            </select><br></br>
+                            Service History: 
+                            <select onChange={event => this.handleChange(event, 'serviceHistory')}>
+                                <option></option>
+                                <option value={'Sole Survivor'}> {this.serviceHistories.at(0)} </option>
+                                <option value={'War Hero'}> {this.serviceHistories.at(1)} </option>
+                                <option value={'Ruthless'}> {this.serviceHistories.at(2)} </option>
+                            </select>
+                            Morality: 
+                            <select onChange={event => this.handleChange(event, 'morality')}>
+                                <option></option>
+                                <option value={'Paragon'}> {this.morals.at(0)} </option>
+                                <option value={'Renegade'}> {this.morals.at(1)} </option>
+                                <option value={'Paragade (aka: Neutral/bit of both)'}> {this.morals.at(2)} </option>
+                            </select><br></br>
+                            <button type="button" onClick={this.handleAdvSubmit}>Adv. Generate</button>
                         </div> :null
                     }
                 </div>
