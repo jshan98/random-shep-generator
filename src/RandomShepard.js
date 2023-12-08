@@ -19,6 +19,7 @@ class FullRandomShep extends Component {
             background: '',
             serviceHistory: '',
             morality: '',
+            showing: true
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -26,12 +27,26 @@ class FullRandomShep extends Component {
     componentDidMount() {
         this.setState({
             firstName: '',
-            gender: '',
+            gender: this.genders.at(this.randomIndexInList(0, this.genders.length-1)),
             chClass: this.chClasses.at(this.randomIndexInList(0, this.chClasses.length-1)),
             background: this.backgrounds.at(this.randomIndexInList(0, this.backgrounds.length-1)),
             serviceHistory: this.serviceHistories.at(this.randomIndexInList(0, this.serviceHistories.length-1)),
             morality: this.morals.at(this.randomIndexInList(0, this.morals.length-1))
         });
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.firstName !== this.props.firstName) {
+            this.setState({
+                firstName: '',
+                gender: '',
+                chClass: '',
+                background: '',
+                serviceHistory: '',
+                morality: '',
+                show: true
+            });
+        }
     }
 
     generateRandomShep = () => {
@@ -52,6 +67,7 @@ class FullRandomShep extends Component {
     }
 
     randomName = (gender) => {
+        this.setState({firstName: ''});
         var randName = '';
         var names = '';
         if(gender === 'Male'){
@@ -67,6 +83,8 @@ class FullRandomShep extends Component {
     randomizeShep = () => {
         var gender = this.randomGender();
         this.randomName(gender);
+        var output = this.generateRandomShep();
+        alert(output);
     }
 
     handleChange = (event, key) => {
@@ -90,20 +108,47 @@ class FullRandomShep extends Component {
             <form onSubmit={this.handleSubmit}>
                 <label>
                     Name:
-                    <input type="text" value={this.state.firstName} onChange={event => this.handleChange(event, 'firstName')} />
+                    <input type="text" defaultValue="" value={this.state.firstName} onChange={event => this.handleChange(event, 'firstName')} />
                 </label><br></br>
                 <div onChange={event => this.handleChange(event, 'gender')}>
                     Gender:
                     <input name="genderSelect" type="radio" value={'Male'} /> Male
                     <input name="genderSelect" type="radio"  value={'Female'} /> Female
                 </div>
-                <input type="submit" value="Generate" onSubmit={this.handleSubmit}/>
-                <button onClick={this.randomizeShep}>Surprise Me</button>
-                <DropdownButton id="dropdown-basic-button" title="Dropdown button">
-                    <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                    <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                </DropdownButton>
+                <button type="button" onClick={this.handleSubmit}>Submit</button>
+                <button type="button" onClick={this.randomizeShep}>Surprise Me</button>
+                <div>
+                    <button type="button" onClick={() => {this.setState({show: !this.state.show})}}>{ this.state.show? 'Hide' : 'Show'} Adv. Options</button>
+                    {
+                        this.state.show? 
+                        <div>
+                            <DropdownButton id="dropdown-basic-button" title="Character Class" onChange={event => this.handleChange(event, 'chClass')}>
+                                <Dropdown.Item value={'Soldier'}>{this.chClasses[0]}</Dropdown.Item>
+                                <Dropdown.Item value={'Engineer'}>{this.chClasses[1]}</Dropdown.Item>
+                                <Dropdown.Item value={'Adept'}>{this.chClasses[2]}</Dropdown.Item>
+                                <Dropdown.Item value={'Infiltrator'}>{this.chClasses[3]}</Dropdown.Item>
+                                <Dropdown.Item value={'Sentinal'}>{this.chClasses[4]}</Dropdown.Item>
+                                <Dropdown.Item value={'Vanguard'}>{this.chClasses[5]}</Dropdown.Item>
+                            </DropdownButton>
+                            <DropdownButton id="dropdown-basic-button" title="Background" onChange={event => this.handleChange(event, 'background')}>
+                                <Dropdown.Item value={'Spacer'}>{this.backgrounds[0]}</Dropdown.Item>
+                                <Dropdown.Item value={'Colonist'}>{this.backgrounds[1]}</Dropdown.Item>
+                                <Dropdown.Item value={'Earthborn'}>{this.backgrounds[2]}</Dropdown.Item>
+                            </DropdownButton>
+                            <DropdownButton id="dropdown-basic-button" title="Service History" onChange={event => this.handleChange(event, 'serviceHistory')}>
+                                <Dropdown.Item value={'Sole Survivor'}>{this.serviceHistories[0]}</Dropdown.Item>
+                                <Dropdown.Item value={'War Hero'}>{this.serviceHistories[1]}</Dropdown.Item>
+                                <Dropdown.Item value={'Ruthless'}>{this.serviceHistories[2]}</Dropdown.Item>
+                            </DropdownButton>
+                            <DropdownButton id="dropdown-basic-button" title="Morality" onChange={event => this.handleChange(event, 'morality')}>
+                                <Dropdown.Item value={'Paragon'}>{this.morals[0]}</Dropdown.Item>
+                                <Dropdown.Item value={'Renegade'}>{this.morals[1]}</Dropdown.Item>
+                                <Dropdown.Item value={'Paragade (aka: Neutral/bit of both)'}>{this.morals[2]}</Dropdown.Item>
+                            </DropdownButton>
+                        </div> :null
+                    }
+                </div>
+                
             </form>
         )
     }
