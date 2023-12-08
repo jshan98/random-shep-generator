@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import { Dropdown } from "react-bootstrap";
+import { Dropdown, DropdownButton } from "react-bootstrap";
 import MaleNames from './maleNames.json';
 import FemaleNames from './femaleNames.json';
 
@@ -99,28 +99,11 @@ class FullRandomShep extends Component {
                 </div>
                 <input type="submit" value="Generate" onSubmit={this.handleSubmit}/>
                 <button onClick={this.randomizeShep}>Surprise Me</button>
-                <Dropdown>
-                    <Dropdown.Toggle variant="success" id="dropdown-basic">
-                        Character Class
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu onChange={event => this.handleChange(event, 'chClass')}>
-                        <Dropdown.Item value={this.chClasses[0]}>{this.chClasses[0]}</Dropdown.Item>
-                        <Dropdown.Item value={this.chClasses[1]}>{this.chClasses[1]}</Dropdown.Item>
-                        <Dropdown.Item value={this.chClasses[2]}>{this.chClasses[2]}</Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown>
-                <Dropdown>
-                    <Dropdown.Toggle variant="success" id="dropdown-basic">
-                        Background
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu onChange={event => this.handleChange(event, 'background')}>
-                        <Dropdown.Item value={this.backgrounds[0]}>{this.backgrounds[0]}</Dropdown.Item>
-                        <Dropdown.Item value={this.backgrounds[1]}>{this.backgrounds[1]}</Dropdown.Item>
-                        <Dropdown.Item value={this.backgrounds[2]}>{this.backgrounds[2]}</Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown>
+                <DropdownButton id="dropdown-basic-button" title="Dropdown button">
+                    <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+                    <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+                    <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+                </DropdownButton>
             </form>
         )
     }
