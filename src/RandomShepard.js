@@ -1,7 +1,7 @@
 import React, {Component} from "react";
-//import { Dropdown, DropdownButton } from "react-bootstrap";
 import MaleNames from './maleNames.json';
 import FemaleNames from './femaleNames.json';
+import CharacterPage from "./CharacterPage";
 
 
 class FullRandomShep extends Component {
@@ -19,9 +19,10 @@ class FullRandomShep extends Component {
             background: '',
             serviceHistory: '',
             morality: '',
-            show: false
+            showAdv: false,
+            showResult: false,
+            selected: ''
         };
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -35,20 +36,6 @@ class FullRandomShep extends Component {
         });
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevProps.firstName !== this.props.firstName) {
-            this.setState({
-                firstName: '',
-                gender: '',
-                chClass: '',
-                background: '',
-                serviceHistory: '',
-                morality: ''
-                
-            });
-        }
-    }
-
     generateRandomShep = () => {
         this.setState({
             chClass: this.chClasses.at(this.randomIndexInList(0, this.chClasses.length-1)),
@@ -56,8 +43,6 @@ class FullRandomShep extends Component {
             serviceHistory: this.serviceHistories.at(this.randomIndexInList(0, this.serviceHistories.length-1)),
             morality: this.morals.at(this.randomIndexInList(0, this.morals.length-1))
         });
-        return ('Name: ' + this.state.firstName + ' Shepard\nGender: ' + this.state.gender + '\nClass: ' + this.state.chClass + '\nBackground: ' 
-        + this.state.background + '\nService History: ' + this.state.serviceHistory + '\nMorality: ' + this.state.morality);
     }
 
     randomGender = () => {
@@ -80,13 +65,14 @@ class FullRandomShep extends Component {
         this.setState({firstName: randName.charAt(0) + randName.substring(1, randName.length).toLocaleLowerCase()});
     }
 
-    // Note to self: is not generating name if selected first upon loading page
     randomizeShep = () => {
         var gender = this.randomGender();
         this.randomName(gender);
-        var output = this.generateRandomShep();
-        alert(output);
-        this.clearAllStates();
+        this.generateRandomShep();
+        var output = ('Name: ' + this.state.firstName + ' Shepard\nGender: ' + this.state.gender + '\nClass: ' + this.state.chClass + '\nBackground: ' 
+        + this.state.background + '\nService History: ' + this.state.serviceHistory + '\nMorality: ' + this.state.morality);
+        console.log("Should output: " + output);
+        this.setState({showResult: true});
     }
 
     handleChange = (event, key) => {
@@ -96,17 +82,18 @@ class FullRandomShep extends Component {
     }
 
     handleSubmit = (e) => {
-        var output = this.generateRandomShep();
-        alert(output);
-        this.clearAllStates();
+        this.generateRandomShep();
+        var output = ('Name: ' + this.state.firstName + ' Shepard\nGender: ' + this.state.gender + '\nClass: ' + this.state.chClass + '\nBackground: ' 
+        + this.state.background + '\nService History: ' + this.state.serviceHistory + '\nMorality: ' + this.state.morality);
+        console.log("Should output: " + output);
+        this.setState({showResult: true});
         e.preventDefault();
     }
-
     handleAdvSubmit = (e) => {
         var output = ('Name: ' + this.state.firstName + ' Shepard\nGender: ' + this.state.gender + '\nClass: ' + this.state.chClass + '\nBackground: ' 
         + this.state.background + '\nService History: ' + this.state.serviceHistory + '\nMorality: ' + this.state.morality);
-        alert(output);
-        this.clearAllStates();
+        console.log("Should output: " + output);
+        this.setState({showResult: true});
         e.preventDefault();
     }
 
@@ -122,7 +109,9 @@ class FullRandomShep extends Component {
             background: '',
             serviceHistory: '',
             morality: '',
-            show: false
+            showAdv: false,
+            showResult: false,
+            selected: ''
         });
     }
 
@@ -135,51 +124,63 @@ class FullRandomShep extends Component {
                 </label><br></br>
                 <div onChange={event => this.handleChange(event, 'gender')}>
                     Gender:
-                    <input name="genderSelect" type="radio" value={'Male'} /> Male
-                    <input name="genderSelect" type="radio"  value={'Female'} /> Female
+                    <input name="genderSelect" type="radio" value={'Male'} checked={this.state.selected === 'Male'} onChange={event => this.handleChange(event, 'selected')}/> Male
+                    <input name="genderSelect" type="radio"  value={'Female'} checked={this.state.selected === 'Female'} onChange={event => this.handleChange(event, 'selected')}/> Female
                 </div>
-                <input type="submit" value="Generate"/>
+                <button type="button" onClick={this.handleSubmit}>Generate</button>
                 <button type="button" onClick={this.randomizeShep}>Surprise Me</button>
-                <div>
-                    <button type="button" onClick={() => {this.setState({show: !this.state.show})}}>{ this.state.show? 'Hide' : 'Show'} Adv. Options</button>
-                    {
-                        this.state.show? 
-                        <div>
-                            Class: 
-                            <select onChange={event => this.handleChange(event, 'chClass')}>
-                                <option></option>
-                                <option value={'Soldier'}> {this.chClasses.at(0)} </option>
-                                <option value={'Engineer'}> {this.chClasses.at(1)} </option>
-                                <option value={'Adept'}> {this.chClasses.at(2)} </option>
-                                <option value={'Infiltrator'}> {this.chClasses.at(3)} </option>
-                                <option value={'Sentinel'}> {this.chClasses.at(4)} </option>
-                                <option value={'Vanguard'}> {this.chClasses.at(5)} </option>
-                            </select>
-                            Background: 
-                            <select onChange={event => this.handleChange(event, 'background')}>
-                                <option></option>
-                                <option value={'Spacer'}> {this.backgrounds.at(0)} </option>
-                                <option value={'Colonist'}> {this.backgrounds.at(1)} </option>
-                                <option value={'Earthborn'}> {this.backgrounds.at(2)} </option>
-                            </select><br></br>
-                            Service History: 
-                            <select onChange={event => this.handleChange(event, 'serviceHistory')}>
-                                <option></option>
-                                <option value={'Sole Survivor'}> {this.serviceHistories.at(0)} </option>
-                                <option value={'War Hero'}> {this.serviceHistories.at(1)} </option>
-                                <option value={'Ruthless'}> {this.serviceHistories.at(2)} </option>
-                            </select>
-                            Morality: 
-                            <select onChange={event => this.handleChange(event, 'morality')}>
-                                <option></option>
-                                <option value={'Paragon'}> {this.morals.at(0)} </option>
-                                <option value={'Renegade'}> {this.morals.at(1)} </option>
-                                <option value={'Paragade (aka: Neutral/bit of both)'}> {this.morals.at(2)} </option>
-                            </select><br></br>
-                            <button type="button" onClick={this.handleAdvSubmit}>Adv. Generate</button>
-                        </div> :null
-                    }
-                </div>
+                <button type="button" onClick={() => {this.setState({showAdv: !this.state.showAdv})}}>{ this.state.showAdv? '' : ''} Advanced Options</button>
+                {
+                    this.state.showAdv? 
+                    <div>
+                        Class: 
+                        <select onChange={event => this.handleChange(event, 'chClass')}>
+                            <option></option>
+                            <option value={'Soldier'}> {this.chClasses.at(0)} </option>
+                            <option value={'Engineer'}> {this.chClasses.at(1)} </option>
+                            <option value={'Adept'}> {this.chClasses.at(2)} </option>
+                            <option value={'Infiltrator'}> {this.chClasses.at(3)} </option>
+                            <option value={'Sentinel'}> {this.chClasses.at(4)} </option>
+                            <option value={'Vanguard'}> {this.chClasses.at(5)} </option>
+                        </select>
+                        Background: 
+                        <select onChange={event => this.handleChange(event, 'background')}>
+                            <option></option>
+                            <option value={'Spacer'}> {this.backgrounds.at(0)} </option>
+                            <option value={'Colonist'}> {this.backgrounds.at(1)} </option>
+                            <option value={'Earthborn'}> {this.backgrounds.at(2)} </option>
+                        </select><br></br>
+                        Service History: 
+                        <select onChange={event => this.handleChange(event, 'serviceHistory')}>
+                            <option></option>
+                            <option value={'Sole Survivor'}> {this.serviceHistories.at(0)} </option>
+                            <option value={'War Hero'}> {this.serviceHistories.at(1)} </option>
+                            <option value={'Ruthless'}> {this.serviceHistories.at(2)} </option>
+                        </select>
+                        Morality: 
+                        <select onChange={event => this.handleChange(event, 'morality')}>
+                            <option></option>
+                            <option value={'Paragon'}> {this.morals.at(0)} </option>
+                            <option value={'Renegade'}> {this.morals.at(1)} </option>
+                            <option value={'Paragade (aka: Neutral/bit of both)'}> {this.morals.at(2)} </option>
+                        </select><br></br>
+                        <button type="button" onClick={this.handleAdvSubmit}>Adv. Generate</button>
+                    </div> :null
+                }
+                {
+                    this.state.showResult?
+                    <div>
+                        <CharacterPage 
+                            firstName={this.state.firstName}
+                            gender={this.state.gender}
+                            chClass={this.state.chClass}
+                            background={this.state.background}
+                            serviceHistory={this.state.serviceHistory}
+                            morality={this.state.morality}
+                        ></CharacterPage>
+                        <button type="button" onClick={this.clearAllStates}>Reset</button>
+                    </div> :null
+                }
                 
             </form>
         )
